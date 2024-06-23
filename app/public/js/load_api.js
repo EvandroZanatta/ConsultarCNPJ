@@ -7,8 +7,7 @@ document.getElementById('formSearch').addEventListener('submit', (e) => {
 
     resultDiv.innerHTML = `<div class="mb-0 alert alert-light">Carregando dados!</div>`;
 
-    // fetch(`https://opencnpj.inapplet.com/api/cnpj/${cnpj}`)
-    fetch(`http://learn1.inapplet.com:3004/api/cnpj/${cnpj}`)
+    fetch(`/api/cnpj/${cnpj}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Erro ao buscar CNPJ.');
