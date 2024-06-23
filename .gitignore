@@ -1,0 +1,5 @@
+downloads/
+app/.env
+generators/.env
+node_modules
+app-extras/output.csv

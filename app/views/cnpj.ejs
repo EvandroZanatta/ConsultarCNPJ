@@ -1,0 +1,522 @@
+<% 
+function formatCurrency(value) {
+    return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function getValueOrDash(value) {
+    return value ? value : '-';
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const [year, month, day] = dateString.split('-');
+    return `${day}-${month}-${year}`;
+}
+
+function formatCEP(cep) {
+    return cep.replace(/^(\d{5})(\d{3})$/, '$1-$2');
+}
+
+function formarCNPJ(cnpj) {
+    return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+}
+
+function replaceSpecialCharacters(text) {
+    text = text.replace(/ /g, "-");
+    text = text.normalize("NFD");
+    text = text.replace(/[\u0300-\u036f]/g, "");
+    text = text.replace(/ç/g, "c");
+    text = text.replace(/Ç/g, "C");
+    text = text.replace(/ñ/g, "n");
+    text = text.replace(/Ñ/g, "N");
+    text = text.toLowerCase();
+    return text.replace(/[^a-z0-9- ]/g, "");
+}
+%>
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <title>OpenCNPJ - Free CNPJ API</title>
+    <meta name="description" content="Get company information using a free API searching for CNPJ">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">Consultar CNPJ</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/EvandroZanatta/OpenDataCNPJ"
+                            target="_blank">Github</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/EvandroZanatta/OpenDataCNPJ/releases/"
+                            target="_blank">Atualizações</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col">
+                <h1><%= cnpj['empresa'][0]['razao_social'] %> (<%= formarCNPJ(cnpj['q_cnpj']) %>)</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr>
+                <h2>Dados da Empresa:</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Razão Social:</p>
+                <p>
+                    <%= cnpj['empresa'][0]['razao_social'] %>
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Natureza Jurídica:</p>
+                <p>
+                    <%= cnpj['empresa'][0]['natureza_descricao'] %> (<%= cnpj['empresa'][0]['natureza_juridica'] %>)
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Qualificação:</p>
+                <p>
+                    <%= cnpj['empresa'][0]['qualificacao_descricao'] %> (<%=
+                            cnpj['empresa'][0]['qualificacao_responsavel'] %>)
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Capital Social:</p>
+                <p>
+                    <%= formatCurrency(cnpj['empresa'][0]['capital_social']) %>
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Porte da Empresa:</p>
+                <p>
+                    <%= cnpj['empresa'][0]['porte_empresa_descricao'] %> (<%= cnpj['empresa'][0]['porte_empresa'] %>)
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Ente Federativo Responsável:</p>
+                <p>
+                    <%= getValueOrDash(cnpj['empresa'][0]['ente_federativo_responsavel']) %>
+                </p>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col">
+                <hr>
+                <h2>Dados do Estabelecimento:</h2>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Identificador Matriz/Filial:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['identificador_matriz_filial_descricao'] %> (<%= cnpj['estabelecimento'][0]['identificador_matriz_filial'] %>)
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Nome Fantasia:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['nome_fantasia'] || '-' %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Situação Cadastral:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['situacao_cadastral_descricao'] %> (<%= cnpj['estabelecimento'][0]['situacao_cadastral'] %>)
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Data da Situação Cadastral:</p>
+                <p>
+                    <%= formatDate(cnpj['estabelecimento'][0]['data_situacao_cadastral']) %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Motivo da Situação Cadastral:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['motivo_situacao_cadastral_descricao'] %> (<%= cnpj['estabelecimento'][0]['motivo_situacao_cadastral'] %>)
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Data de Início da Atividade:</p>
+                <p>
+                    <%= formatDate(cnpj['estabelecimento'][0]['data_inicio_atividade']) %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Situação Especial:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['situacao_especial'] || '-' %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Data da Situação Especial:</p>
+                <p>
+                    <%= formatDate(cnpj['estabelecimento'][0]['data_situacao_especial']) || '-' %>
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h3>Endereço:</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Tipo de Logradouro:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['tipo_logradouro'] %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Logradouro:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['logradouro'] %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Número:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['numero'] %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Complemento:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['complemento'] %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Bairro:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['bairro'] %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">CEP:</p>
+                <p>
+                    <%= formatCEP(cnpj['estabelecimento'][0]['cep']) %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Município:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['municipio_descricao'] %> (<%= cnpj['estabelecimento'][0]['municipio'] %>)
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">UF:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['uf'] %>
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Nome Cidade Exterior:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['nome_cidade_exterior'] || '-' %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">País:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['pais'] || '-' %> (<%= cnpj['estabelecimento'][0]['pais'] || '-' %>)
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h3>Contato:</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Telefone 1:</p>
+                <p>
+                    (<%= cnpj['estabelecimento'][0]['ddd_1'] %>) <%= cnpj['estabelecimento'][0]['telefone_1'] %>
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Telefone 2:</p>
+                <p>
+                    (<%= cnpj['estabelecimento'][0]['ddd_2'] || '-' %>) <%= cnpj['estabelecimento'][0]['telefone_2'] || '-' %>
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Fax:</p>
+                <p>
+                    (<%= cnpj['estabelecimento'][0]['ddd_fax'] || '-' %>) <%= cnpj['estabelecimento'][0]['fax'] || '-' %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">E-mail:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['correio_eletronico'] %>
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h3>CNAEs:</h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">CNAE Fiscal Principal:</p>
+                <p>
+                    <%= cnpj['estabelecimento'][0]['cnae_fiscal_principal'] %> - <%= cnpj['estabelecimento'][0]['cnae_fiscal_principal_descricao'] %>
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <% if (cnpj['estabelecimento'][0]['cnae_fiscal_secundaria_lista'] && cnpj['estabelecimento'][0]['cnae_fiscal_secundaria_lista'].length > 0) { %>
+                <div class="col-auto">
+                    <p class="mb-0 fw-bold">CNAEs Fiscais Secundários:</p>
+                    <p>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>    
+                                    <th>Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% cnpj['estabelecimento'][0]['cnae_fiscal_secundaria_lista'].forEach(function(cnae, index) { %>
+                                    <tr>
+                                        <td><%= cnae.cnae_fiscal_secundaria %></td>
+                                        <td><%= cnae.cnae_fiscal_secundaria_descricao %></td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </p>
+                </div>
+            <% } else { %>
+                <div class="col-auto">
+                    <p class="mb-0 fw-bold">CNAEs Fiscais Secundários:</p>
+                    <p>-</p>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <hr>
+                <h2>Sócios:</h2>
+            </div>
+        </div>
+
+        <!-- se existir cnpj['socios'] -->
+        <% if (cnpj['socios'] && cnpj['socios'].length > 0) { %>
+
+            <% cnpj['socios'].forEach(function(socio, index) { %>
+                
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">Identificador Sócio:</p>
+                                <%= socio['identificador_socio_descricao'] %> (<%= socio['identificador_socio'] %>)
+                            </div>
+            
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">Nome Sócio:</p>
+                                <%= socio['nome_socio_razao_social'] %>
+                            </div>
+            
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">CPF/CNPJ:</p>
+                                <%= socio['cpf_cnpj_socio'] %>
+                            </div>
+            
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">Qualificação Sócio:</p>
+                                <%= socio['qualificacao_socio_descricao'] %> (<%= socio['qualificacao_socio'] %>)
+                            </div>
+            
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">Data de Entrada na Sociedade:</p>
+                                <%= formatDate(socio['data_entrada_sociedade']) %>
+                            </div>
+            
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">País:</p>
+                                <%= socio['pais_descricao'] || '-' %> (<%= socio['pais'] || '-' %>)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">Representante Legal:</p>
+                                <%= socio['representante_legal'] %>
+                            </div>
+            
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">Nome do Representante Legal:</p>
+                                <%= socio['nome_do_representante'] || '-' %>
+                            </div>
+            
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">Qualificação Representante Legal:</p>
+                                <%= socio['qualificacao_representante_legal_descricao'] %> (<%= socio['qualificacao_representante_legal'] %>)
+                            </div>
+            
+                            <div class="col-auto mb-3">
+                                <p class="mb-0 fw-bold">Faixa Etária:</p>
+                                <%= socio['faixa_etaria_descricao'] %> (<%= socio['faixa_etaria'] %>)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        <% } else { %>
+            <div class="col-auto">
+                <p>Sem dados de sócios</p>
+            </div>
+        <% }; %>
+
+        <div class="row">
+            <div class="col">
+                <hr>
+                <h2>Simples:</h2>
+            </div>
+        </div>
+
+        <% if (cnpj['simples'].length > 0) { %>
+
+        <div class="row">
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Opção pelo Simples:</p>
+                <p>
+                    <%= cnpj['simples'][0]['opcao_pelo_simples'] === 'S' ? 'Sim' : 'Não' %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Data da Opção pelo Simples:</p>
+                <p>
+                    <%= formatDate(cnpj['simples'][0]['data_opcao_simples']) %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Data da Exclusão do Simples:</p>
+                <p>
+                    <%= formatDate(cnpj['simples'][0]['data_exclusao_simples']) || '-' %>
+                </p>
+            </div>
+
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Opção MEI:</p>
+                <p>
+                    <%= cnpj['simples'][0]['opcao_mei'] === 'S' ? 'Sim' : 'Não' %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Data da Opção MEI:</p>
+                <p>
+                    <%= formatDate(cnpj['simples'][0]['data_opcao_mei']) || '-' %>
+                </p>
+            </div>
+            
+            <div class="col-auto">
+                <p class="mb-0 fw-bold">Data da Exclusão MEI:</p>
+                <p>
+                    <%= formatDate(cnpj['simples'][0]['data_exclusao_mei']) || '-' %>
+                </p>
+            </div>
+        </div>
+        <% } else { %>
+            <div class="col-auto">
+                <p>Sem dados para o Simples</p>
+            </div>
+        <% } %>
+    </div>
+
+    <div class="container mt-4 mb-5">
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body text-bg-light">
+                        <div class="row">
+                            <div class="col-12">
+                                <h2>Outras empresas</h2>
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-stretch">
+                            <% otherCompanies.forEach(function(companies, index) { %>
+                                <div class="col">
+                                    <div class="card mb-3 h-100">
+                                        <div class="card-body">
+                                            <a href="/cnpj/<%= companies['cnpj'] %>-<%= replaceSpecialCharacters(companies['razao_social']) %>">
+                                                <p class="mb-1 fw-bold"><%= formarCNPJ(companies['cnpj']) %></p>
+                                            </a>
+                                                <p class="mb-0"><%= companies['razao_social'] %></p>
+                                                <% if (companies['nome_fantasia']) { %>
+                                                    <p class="mb-0 small text-muted">(<%= companies['nome_fantasia'] %>)</p>
+                                                <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

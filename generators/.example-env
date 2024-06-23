@@ -1,0 +1,4 @@
+SPARK_JARS=/..../generators/postgresql-42.6.0.jar
+DB_URL=jdbc:postgresql://localhost:5432/database?currentSchema=table_default
+DB_USER=user
+DB_PW=pewpewpew
