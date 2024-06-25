@@ -38,6 +38,7 @@ app.use('/api/search', require('./routes/search')); // GET /api/search?query=ter
 app.get('/search', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'search.html'));
 });
+app.use('/sitemap/', require('./routes/sitemap')); // GET /api/search?query=term
 
 app.get('/statistic', async (req, res) => {
     const query = `select count(distinct(cnpj)) as cnpjs, count(cnpj) as qtde, avg(time_ms) as avg_time from public.events where status = 1;`

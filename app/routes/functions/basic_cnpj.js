@@ -2,11 +2,6 @@ const { performance } = require('perf_hooks');
 const dbschema = process.env.DB_SCHEMA
 
 module.exports = class BasicCNPJ {
-    constructor() {
-        // this.cnpj = cnpj;
-        console.log('ok')
-    }
-
     async getCnpj(cnpj, req) {
 
         cnpj = cnpj.replace(/\D/g, '');
