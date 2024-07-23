@@ -6,23 +6,17 @@ const dbschema = process.env.DB_SCHEMA
 
 router.get('/*', async (req, res) => {
 
-
-    console.log(req.params)
-
     cnpj = req.params[0] || '';
 
     if(cnpj === '') {
         res.redirect('/');
         return;
     }
-
-    // split cnpj by - and get first part
+    
     cnpj = cnpj.split('-')[0];
 
-    // initialize BasicCNPJ
     let basicCNPJ = new BasicCNPJ();
 
-    // get cnpj from request
     let result = await basicCNPJ.getCnpj(cnpj, req);
 
     const otherCompanies = `

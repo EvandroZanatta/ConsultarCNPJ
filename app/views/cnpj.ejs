@@ -14,7 +14,11 @@ function formatDate(dateString) {
 }
 
 function formatCEP(cep) {
-    return cep.replace(/^(\d{5})(\d{3})$/, '$1-$2');
+    try {
+        cep.replace(/^(\d{5})(\d{3})$/, '$1-$2');
+    } catch (error) {
+        return '';
+    }
 }
 
 function formarCNPJ(cnpj) {
