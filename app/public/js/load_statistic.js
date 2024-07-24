@@ -10,5 +10,5 @@ fetch(`/statistic`)
         console.log(data)
         document.getElementById('stt_cnpjs').innerText = data['cnpjs']
         document.getElementById('stt_qtde').innerText = data['qtde']
-        document.getElementById('stt_time').innerText = data['avg_time'].toFixed(1) + ' ms'
+        document.getElementById('stt_time').innerText = data['avg_time'] + ' ms'
     })
