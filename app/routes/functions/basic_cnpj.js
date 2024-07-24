@@ -202,15 +202,15 @@ module.exports = class BasicCNPJ {
             if (resultEstabe.rows.length === 0) {
                 res.status(404).json({ error: 'CNPJ não encontrado' });
 
-                const endTime = performance.now();
-                const timeQuery = endTime - startTime;
+                // const endTime = performance.now();
+                // const timeQuery = endTime - startTime;
 
-                const query = `
-                INSERT INTO public.events (cnpj, time_ms, ip, status)
-                VALUES ($1, $2, $3, $4);
-            `;
+                // const query = `
+                // INSERT INTO public.events (cnpj, time_ms, ip, status)
+                // VALUES ($1, $2, $3, $4);
+                // `;
 
-                req.pool.query(query, [cnpj, timeQuery.toFixed(2), ips[0], 0]);
+                // req.pool.query(query, [cnpj, timeQuery.toFixed(2), ips[0], 0]);
             } else {
 
                 const resultEmpresas = await req.pool.query(queryEmpresas, [nCompany]);
@@ -234,14 +234,14 @@ module.exports = class BasicCNPJ {
                 resultJson['estabelecimento']['cnae_fiscal_secundaria_lista'] = {};
                 resultJson['estabelecimento'][0]['cnae_fiscal_secundaria_lista'] = resultSecCnaes.rows;
 
+                const query = `
+                INSERT INTO public.events (cnpj, time_ms, ip)
+                VALUES ($1, $2, $3);
+                `;
+
+                req.pool.query(query, [cnpj, timeQuery.toFixed(0), ips[0]]);
+
                 return resultJson;
-
-                // const query = `
-                // INSERT INTO public.events (cnpj, time_ms, ip, status)
-                // VALUES ($1, $2, $3, $4);
-                // `;
-
-                // req.pool.query(query, [cnpj, timeQuery.toFixed(2), ips[0], 1]);
             }
         } catch (error) {
             console.error('Erro ao consultar o banco de dados', error);

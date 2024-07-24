@@ -25,6 +25,12 @@ app.use((req, res, next) => {
     next();
 });
 
+// execute REFRESH MATERIALIZED VIEW public.events_summary; a cada 10 minutos
+setInterval(async () => {
+    const query = `REFRESH MATERIALIZED VIEW public.events_summary;`
+    await pool.query(query);
+}, 600000);
+
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
@@ -41,7 +47,7 @@ app.get('/search', (req, res) => {
 app.use('/sitemap/', require('./routes/sitemap')); // GET /api/search?query=term
 
 app.get('/statistic', async (req, res) => {
-    const query = `select count(distinct(cnpj)) as cnpjs, count(cnpj) as qtde, avg(time_ms) as avg_time from public.events where status = 1;`
+    const query = `SELECT * FROM public.events_summary;`
     const result = await req.pool.query(query);
 
     res.json(result.rows[0])
