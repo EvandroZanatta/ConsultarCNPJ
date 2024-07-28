@@ -46,6 +46,11 @@ app.get('/search', (req, res) => {
 });
 app.use('/sitemap/', require('./routes/sitemap')); // GET /api/search?query=term
 
+// 404 page
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
+
 app.get('/statistic', async (req, res) => {
     const query = `SELECT * FROM public.events_summary;`
     const result = await req.pool.query(query);

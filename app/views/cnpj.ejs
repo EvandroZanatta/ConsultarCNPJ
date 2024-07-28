@@ -22,7 +22,7 @@ function formatCEP(cep) {
 }
 
 function formarCNPJ(cnpj) {
-    return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+    return cnpj.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');    
 }
 
 function replaceSpecialCharacters(text) {
@@ -205,7 +205,7 @@ function replaceSpecialCharacters(text) {
             <div class="col-auto">
                 <p class="mb-0 fw-bold">Tipo de Logradouro:</p>
                 <p>
-                    <%= cnpj['estabelecimento'][0]['tipo_logradouro'] %>
+                    <%= cnpj['estabelecimento'][0]['tipo_logradouro'] || '-' %>
                 </p>
             </div>
             
@@ -226,21 +226,21 @@ function replaceSpecialCharacters(text) {
             <div class="col-auto">
                 <p class="mb-0 fw-bold">Complemento:</p>
                 <p>
-                    <%= cnpj['estabelecimento'][0]['complemento'] %>
+                    <%= cnpj['estabelecimento'][0]['complemento'] || '-' %>
                 </p>
             </div>
             
             <div class="col-auto">
                 <p class="mb-0 fw-bold">Bairro:</p>
                 <p>
-                    <%= cnpj['estabelecimento'][0]['bairro'] %>
+                    <%= cnpj['estabelecimento'][0]['bairro'] || '-' %>
                 </p>
             </div>
             
             <div class="col-auto">
                 <p class="mb-0 fw-bold">CEP:</p>
                 <p>
-                    <%= formatCEP(cnpj['estabelecimento'][0]['cep']) %>
+                    <%= formatCEP(cnpj['estabelecimento'][0]['cep']) || '-' %>
                 </p>
             </div>
             
@@ -268,7 +268,7 @@ function replaceSpecialCharacters(text) {
             <div class="col-auto">
                 <p class="mb-0 fw-bold">País:</p>
                 <p>
-                    <%= cnpj['estabelecimento'][0]['pais'] || '-' %> (<%= cnpj['estabelecimento'][0]['pais'] || '-' %>)
+                    <%= cnpj['estabelecimento'][0]['pais_descricao'] || '-' %> (<%= cnpj['estabelecimento'][0]['pais'] || '-' %>)
                 </p>
             </div>
         </div>
@@ -283,7 +283,7 @@ function replaceSpecialCharacters(text) {
             <div class="col-auto">
                 <p class="mb-0 fw-bold">Telefone 1:</p>
                 <p>
-                    (<%= cnpj['estabelecimento'][0]['ddd_1'] %>) <%= cnpj['estabelecimento'][0]['telefone_1'] %>
+                    (<%= cnpj['estabelecimento'][0]['ddd_1'] || '-' %>) <%= cnpj['estabelecimento'][0]['telefone_1'] || '-' %>
                 </p>
             </div>
 
@@ -304,7 +304,7 @@ function replaceSpecialCharacters(text) {
             <div class="col-auto">
                 <p class="mb-0 fw-bold">E-mail:</p>
                 <p>
-                    <%= cnpj['estabelecimento'][0]['correio_eletronico'] %>
+                    <%= cnpj['estabelecimento'][0]['correio_eletronico'] || '-' %>
                 </p>
             </div>
         </div>

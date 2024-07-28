@@ -7,7 +7,6 @@ module.exports = class BasicCNPJ {
         cnpj = cnpj.replace(/\D/g, '');
 
         if (cnpj.length != 14) {
-            res.status(400).json({ error: 'CNPJ inválido' });
             return false;
         }
 
@@ -122,10 +121,10 @@ module.exports = class BasicCNPJ {
             REPLACE(e.ente_federativo_responsavel, '\"', '') as ente_federativo_responsavel
 
         FROM `+ dbschema + `.empresas as e
-        INNER JOIN `+ dbschema + `.qualificacoes as q
-            ON e.qualificacao_responsavel = q.codigo
         INNER JOIN `+ dbschema + `.naturezas as n
             ON e.natureza_juridica = n.codigo
+        LEFT JOIN `+ dbschema + `.qualificacoes as q
+            ON e.qualificacao_responsavel = q.codigo
         WHERE cnpj_basico = $1 LIMIT 1`
 
         const querySocios = `
@@ -200,7 +199,7 @@ module.exports = class BasicCNPJ {
             ).split(',');
 
             if (resultEstabe.rows.length === 0) {
-                res.status(404).json({ error: 'CNPJ não encontrado' });
+                return false;
 
                 // const endTime = performance.now();
                 // const timeQuery = endTime - startTime;

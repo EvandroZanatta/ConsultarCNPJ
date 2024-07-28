@@ -19,6 +19,16 @@ router.get('/*', async (req, res) => {
 
     let result = await basicCNPJ.getCnpj(cnpj, req);
 
+    if(!result) {
+        res.redirect('/404');
+        return false;
+    }
+
+    if(result.empresa.length === 0) {
+        res.redirect('/404');
+        return false;
+    }
+
     const otherCompanies = `
         WITH base AS (
             SELECT 
